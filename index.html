@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Elemental Rock Paper Scissors</title>
+	<script src="https://www.gstatic.com/firebasejs/4.3.1/firebase.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<style type="text/css">
+		
+
+		table{
+			margin: auto;
+		}
+
+		img{
+			height: 100px;
+			width: 150px;
+		}
+
+		.container{
+			margin: 20px 10%;
+		}
+
+		h1{
+			text-align: center;
+		}
+		h2{
+			clear: left;
+		}
+
+		th, td{
+			padding: 10px;
+			border: solid 1px black;
+		}
+
+		th{
+			height: 100px;
+			width: 200px;
+		}
+
+		body{
+			margin: 0;
+			padding: 0;
+			background-color: black;
+			background-image: url(https://i.ytimg.com/vi/NlzTtmrRyq4/maxresdefault.jpg);
+			background-attachment: fixed;
+			background-repeat: no-repeat;
+			background-position: center center;
+			background-size: height: 100% width 100%;
+		}
+
+		.wrapper{
+			background-color: white;
+			margin: 100px 200px;
+			padding: 10px 0px;
+			border: black solid 1px;
+			border-radius: 100px 100px 0px 0px;
+		}
+
+
+	</style>
+
+</head>
+
+<body>
+	<div class="wrapper">
+		<h1>Earth, Wind, and Fire (Rock, Paper, Scissors)</h1>
+		<div class="container">
+			<h2 id="name1">Enter your name here:</h2>
+			<form id="nameSubmission1">
+				<input id="textBoxName1" type="text" name="textBox">
+				<input id="submitName1" type="submit" value="Submit">
+			</form>
+			<h2 id="name2">Enter your name here:</h2>
+			<form id="nameSubmission2">
+				<input id="textBoxName2" type="text" name="textBox">
+				<input id="submitName2" type="submit" value="Submit">
+			</form>
+
+			<table id="ofElements">
+			</table>
+		</div>
+		<div class="container">
+			<table class="results">
+				<tr>
+					<th><h2 id="playerOneSelection">Player 1 Selection:</h2></th>
+					<th><h2>Result:</h2></th>
+					<th><h2 id="playerTwoSelection">Player 2 Selection:</h2></th>
+				</tr>
+				<tr>
+					<td><div id="userSelection"></div></td>
+					<td id="result"></td>
+					<td><div id="opponentSelection"></div></td>
+				</tr>
+			</table>
+			<form id="chat">
+				<textarea id="chatBox" rows="4" cols="50"></textarea>
+			</form>
+		</div>
+	</div>
+	
+
+
+	<script type="text/javascript">
+
+	  	// Initialize Firebase
+	  	var config = {
+	  		apiKey: "AIzaSyAOYj0Ygm4ADMHrbQsq3HDxr72DVhexTRM",
+	  		authDomain: "rockpaperscissors-fd711.firebaseapp.com",
+	  		databaseURL: "https://rockpaperscissors-fd711.firebaseio.com",
+	  		projectId: "rockpaperscissors-fd711",
+	  		storageBucket: "rockpaperscissors-fd711.appspot.com",
+	  		messagingSenderId: "595408918465"
+	  	};
+
+	  	firebase.initializeApp(config);
+	  	var database = firebase.database();
+
+
+
+
+
+//Enter Names------------------------------------------------------------
+//Player 1
+$("#submitName1").on("click", function(){
+	event.preventDefault();
+	var user1 = $("#textBoxName1").val().trim()
+	database.ref("/user/player1").set({
+		user1: user1,
+		dateAdded: firebase.database.ServerValue.TIMESTAMP
+	});
+	$("#nameSubmission1").remove();
+	$("#nameSubmission2").remove();
+	var elementAdder = $("<tr><td><img id=\"Earth\" class=\"element1\" src=\"https://static.turbosquid.com/Preview/2014/08/01__19_04_23/WP%20GRASS%20SOIL%20LAYERS.jpg279834f2-902c-497d-b28c-49414caa4403Original.jpg\"></td><td><img id=\"Wind\" class=\"element1\" src=\"http://dompotolok.ru/uploads_redactor/images/dizajn-natjazhnyh-potolkov-art-739.jpg\"></td><td><img id=\"Fire\" class=\"element1\" src=\"http://dreamicus.com/data/fire/fire-04.jpg\"></td></tr>");
+	$("#ofElements").append(elementAdder)
+
+
+	var chatAdder = $("<input id=\"textBox1\" type=\"text\" name=\"textBox1\"><input id=\"submit1\" type=\"submit\" value=\"Submit\">");
+	$("#chat").append(chatAdder)
+
+});
+database.ref("user/player1").on("value", function(childsnap) {
+	// $("#nameSubmission1").remove();
+	$("#name1").html("Player 1: " + childsnap.val().user1);
+	$("#nameSubmission1").remove();
+
+	
+});
+
+
+
+//Player 2
+$("#submitName2").on("click", function(){
+	event.preventDefault();
+	var user2 = $("#textBoxName2").val().trim()
+
+	database.ref("/user/player2").set({
+		user2: user2,
+		dateAdded: firebase.database.ServerValue.TIMESTAMP
+	});
+	$("#nameSubmission1").remove();
+	$("#nameSubmission2").remove();
+	var elementAdder = $("<tr><td><img id=\"Earth\" class=\"element2\" src=\"https://static.turbosquid.com/Preview/2014/08/01__19_04_23/WP%20GRASS%20SOIL%20LAYERS.jpg279834f2-902c-497d-b28c-49414caa4403Original.jpg\"></td><td><img id=\"Wind\" class=\"element2\" src=\"http://dompotolok.ru/uploads_redactor/images/dizajn-natjazhnyh-potolkov-art-739.jpg\"></td><td><img id=\"Fire\" class=\"element2\" src=\"http://dreamicus.com/data/fire/fire-04.jpg\"></td></tr>");
+	$("#ofElements").append(elementAdder)
+
+	var chatAdder = $("<input id=\"textBox2\" type=\"text\" name=\"textBox1\"><input id=\"submit2\" type=\"submit\" value=\"Submit\">");
+	$("#chat").append(chatAdder)
+
+});
+database.ref("user/player2").on("value", function(childsnap) {
+	// $("#nameSubmission2").remove();
+	$("#name2").html("Player 2: " + childsnap.val().user2);
+	$("#nameSubmission2").remove();
+});
+
+
+
+
+//Select Element--------------------------------------------------
+//Player 1
+$(document).on("click", ".element1", selectElement1);
+
+function selectElement1(){
+	var image = this.src;
+	var elementName = this.id;
+
+	database.ref("/user/player1/element").set({
+		image: image,
+		elementName: elementName
+	});
+};
+
+database.ref("/user/player1/element").on("value", function(snapshot) {
+	$("#userSelection").html("<img src=\"" + snapshot.val().image + "\">");
+	$("#playerOneSelection").html("Player 1 Selects: " + snapshot.val().elementName);
+}, function(errorObject) {
+	console.log("The read failed: " + errorObject.code);
+});
+
+
+
+
+//Player 2
+$(document).on("click", ".element2", selectElement2);
+
+function selectElement2(){
+
+	var image = this.src;
+	var elementName = this.id;
+
+	database.ref("/user/player2/element").set({
+		image: image,
+		elementName: elementName
+	});
+};
+database.ref("/user/player2/element").on("value", function(snapshot) {
+	$("#opponentSelection").html("<img src=\"" + snapshot.val().image + "\">");
+	$("#playerTwoSelection").html("Player 2 Selects: " + snapshot.val().elementName);
+}, function(errorObject) {
+	console.log("The read failed: " + errorObject.code);
+});
+
+
+
+
+//Enable Chat -----------------------------------------------------
+//Player 1
+$(document).on("click", "#submit1", chatItUp1);
+
+function chatItUp1(){
+	event.preventDefault();
+	var text1 = $("#textBox1").val().trim()
+	if (text1 !== ""){
+		database.ref("/user/player1/text").push({
+			text1: text1,
+			dateAdded: firebase.database.ServerValue.TIMESTAMP
+		});
+	}
+	$("#textBox1").val("")
+};
+database.ref("/user/player1/text").on("child_added", function(childsnap) {
+	$("#chatBox").append("Player1: " + childsnap.val().text1 + "\n");
+});
+
+//Player 2
+$(document).on("click", "#submit2", chatItUp2);
+
+function chatItUp2(){
+	event.preventDefault();
+	var text2 = $("#textBox2").val().trim()
+	if (text2 !== ""){
+		database.ref("/user/player2/text").push({
+			text2: text2,
+			dateAdded: firebase.database.ServerValue.TIMESTAMP
+		});
+	}
+	$("#textBox2").val("")
+};
+database.ref("/user/player2/text").on("child_added", function(childsnap) {
+	$("#chatBox").append("Player2: " + childsnap.val().text2 + "\n");
+});
+
+
+
+//calculations
+var element1 = "";
+var element2 = "";
+
+
+database.ref("/user/player1/element/").on("value", function(snapshot) {
+	console.log(snapshot.val().elementName);
+	element1 = snapshot.val().elementName;
+
+	checkResult();
+}, function(errorObject) {
+	console.log("The read failed: " + errorObject.code);
+});
+
+database.ref("/user/player2/element/").on("value", function(snapshot) {
+	console.log(snapshot.val().elementName);
+	element2 = snapshot.val().elementName;
+
+	checkResult();
+
+}, function(errorObject) {
+	console.log("The read failed: " + errorObject.code);
+});
+
+
+function checkResult(){
+//Fire and Water
+if (element2 === "Fire" && element1 === "Water"){
+	console.log("Player 1 wins!")
+	$("#result").text("Player 1 wins!")
+}
+if (element1 === "Fire" && element2 === "Water"){
+	console.log("Player 2 wins!")
+	$("#result").text("Player 2 wins!")
+}
+
+//Water and Earth
+
+if (element2 === "Water" && element1 === "Earth"){
+	console.log("Player 2 wins!");
+	$("#result").text("Player 2 wins!");
+}
+if (element1 === "Water" && element2 === "Earth"){
+	console.log("Player 1 wins!");
+	$("#result").text("Player 1 wins!");
+}
+
+//Earth and Fire
+if (element2 === "Earth" && element1 === "Fire"){
+	console.log("Player 2 wins!");
+	$("#result").text("Player 2 wins!");
+}
+if (element1 === "Earth" && element2 === "Fire"){
+	console.log("Player 1 wins!");
+	$("#result").text("Player 1 wins!");
+}
+//Tie Conditions
+if (element1 === "Earth" && element2 === "Earth"){
+	console.log("Tie!");
+	$("#result").text("Tie!");
+}
+if (element1 === "Water" && element2 === "Water"){
+	console.log("Tie!");
+	$("#result").text("Tie!");
+}
+if (element1 === "Fire" && element2 === "Fire"){
+	console.log("Tie!");
+	$("#result").text("Tie!");
+}
+};
+
+
+
+$(window).on("beforeunload", function() {
+});
+
+
+
+</script>
+</body>
+</html>
